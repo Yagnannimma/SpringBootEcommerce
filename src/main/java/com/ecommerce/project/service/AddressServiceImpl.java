@@ -96,7 +96,7 @@ public class AddressServiceImpl implements AddressService{
         userRepository.save(user);
         addressRepository.deleteById(addressId);
 
-        return "Address deleted successfully with addressId: "+addressId;
+        return "Address deleted successfully for addressId: "+addressId;
     }
 
 
