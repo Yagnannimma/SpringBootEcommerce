@@ -66,5 +66,38 @@ public class AddressServiceImpl implements AddressService{
                 .toList();
     }
 
+    @Override
+    public AddressDTO updateAddressById(Long addressId, AddressDTO addressDTO) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(()-> new ResourceNotFoundException("Address","addressId",addressId));
+
+        address.setCity(addressDTO.getCity());
+        address.setPincode(addressDTO.getPincode());
+        address.setState(addressDTO.getState());
+        address.setCountry(addressDTO.getCountry());
+        address.setStreet(addressDTO.getStreet());
+        address.setBuildingName(addressDTO.getBuildingName());
+
+        Address updatedAddress = addressRepository.save(address);
+        User user = address.getUser();
+        user.getAddresses().removeIf(adr -> adr.getAddressId().equals(addressId));
+        user.getAddresses().add(updatedAddress);
+        userRepository.save(user);
+        return modelMapper.map(updatedAddress, AddressDTO.class);
+    }
+
+    @Override
+    public String deleteAddress(Long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(()-> new ResourceNotFoundException("Address","addressId",addressId));
+
+        User user = address.getUser();
+        user.getAddresses().removeIf(adr -> adr.getAddressId().equals(addressId));
+        userRepository.save(user);
+        addressRepository.deleteById(addressId);
+
+        return "Address deleted successfully with addressId: "+addressId;
+    }
+
 
 }
