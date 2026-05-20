@@ -65,8 +65,9 @@ public class OrderServiceImpl implements OrderService{
 
         Payment payment = new Payment(paymentMethod, pgPaymentId, pgStatus, pgResponseMessage, pgName);
         payment.setOrder(order);
-        payment = paymentRepository.save(payment);
         order.setPayment(payment);
+        Payment newpayment = paymentRepository.save(payment);
+
 
         Order savedOrder = orderRepository.save(order);
         List<CartItem> cartItems = cart.getCartItems();
